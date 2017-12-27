@@ -11,10 +11,13 @@ build_script:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;;%PATH%"
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
-  - "pip install ."
   - "pip install -Ur test-requirements.txt"
   - "pip install codecov"
+  - "python setup.py sdist --formats=zip"
+  - "python -c \"import async_generator; print(async_generator.__version__)\" > version.txt"
+  - "set /p VERSION=<version.txt"
+  - "pip install dist\\async_generator-%VERSION%.zip"
 
 test_script:
-  - py.test -ra --pyargs async_generator --cov=async_generator --cov-config=.coveragerc
-  - codecov
+  - "pytest -ra --pyargs async_generator --cov=\"%PYTHON%\\lib\\site-packages\\async_generator\" --cov-config=.coveragerc"
+  - "codecov"
